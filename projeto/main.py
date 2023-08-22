@@ -7,6 +7,82 @@ def limpa_tela():
     else:
         _ = system("clear")
 
+def display_hangman(chances):
+
+    # Lista de estágios da forca
+    stages = [  # estágio 6 (final)
+                """
+                   --------
+                   |      |
+                   |      O
+                   |     \\|/
+                   |      |
+                   |     / \\
+                   -
+                """,
+                # estágio 5
+                """
+                   --------
+                   |      |
+                   |      O
+                   |     \\|/
+                   |      |
+                   |     / 
+                   -
+                """,
+                # estágio 4
+                """
+                   --------
+                   |      |
+                   |      O
+                   |     \\|/
+                   |      |
+                   |      
+                   -
+                """,
+                # estágio 3
+                """
+                   --------
+                   |      |
+                   |      O
+                   |     \\|
+                   |      |
+                   |     
+                   -
+                """,
+                # estágio 2
+                """
+                   --------
+                   |      |
+                   |      O
+                   |      |
+                   |      |
+                   |     
+                   -
+                """,
+                # estágio 1
+                """
+                   --------
+                   |      |
+                   |      O
+                   |    
+                   |      
+                   |     
+                   -
+                """,
+                # estágio 0
+                """
+                   --------
+                   |      |
+                   |      
+                   |    
+                   |      
+                   |     
+                   -
+                """
+    ]
+    return stages[chances]
+
 def game():
     limpa_tela()
 
@@ -15,32 +91,38 @@ def game():
 
     palavras = ["banana", "abacate","uva","morango","laranja"]
     palavra = random.choice(palavras)
-    letras_descobertas = ["_" for letra in palavra]
+    letras_descobertas = [letra for letra in palavra]
+    tabuleiro = ["_"] * len(palavra)
     choices = 6
-    letras_erradas = []
+    letras_escolhidas = []
 
     while choices > 0:
         
-        print(" ".join(letras_descobertas))
+        print(display_hangman(choices))
+        print(" ".join(tabuleiro))
         print("\nNumero de chances restantes: ",choices)
-        print("Letras erradas"," ".join(letras_erradas))
+        print("Letras escolhidas "," ".join(letras_escolhidas))
         tentativa = input("digite uma letra: ").lower()
 
+        if tentativa in letras_escolhidas:
+            print("Ja digitou essa letra tente outra ")
+            continue
+
+        letras_escolhidas.append(tentativa)
+
         if tentativa in palavra:
-            index = 0
-            for letra in palavra:
-                if tentativa == letra:
-                    letras_descobertas[index] = letra
-                index+=1
+            for indice in range(len(letras_descobertas)):
+                if tentativa == letras_descobertas[indice]:
+                    tabuleiro[indice] = tentativa
+            if "_" not in tabuleiro:
+                print("voce venceu, a palavra era ",palavra)
+                break
+
         else:
+            print("letra errada")
             choices-=1
-            letras_erradas.append(tentativa)
-
-        if "_" not in letras_descobertas:
-            print("voce venceu, a palavra era ",palavra)
-            break
-
-    if "_" in letras_descobertas:
+        
+    if "_" in tabuleiro:
         print("voce perdeu, a palavra era ",palavra)
 
 if __name__ == "__main__":
